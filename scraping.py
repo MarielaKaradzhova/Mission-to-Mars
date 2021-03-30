@@ -1,3 +1,33 @@
+#Dependencies
+# Import Splinter, BeautifulSoup, and Pandas
+from splinter import Browser
+from bs4 import BeautifulSoup as soup
+import pandas as pd
+import datetime as dt
+from webdriver_manager.chrome import ChromeDriverManager
+
+#Function to 1. Initialize Browser, 2. Create data dictionary, 3. End WebDriver and return scraped data.
+def scrape_all():
+    # Initiate headless driver for deployment
+    executable_path = {'executable_path': ChromeDriverManager().install()}
+    browser = Browser('chrome', **executable_path, headless=True)
+
+    news_title, news_paragraph = mars_news(browser)
+
+    # Run all scraping functions and store results in a dictionary
+    data = {
+        "news_title": news_title,
+        "news_paragraph": news_paragraph,
+        "featured_image": featured_image(browser),
+        "facts": mars_facts(),
+        "last_modified": dt.datetime.now()
+    }
+
+    # Stop webdriver and return data
+    browser.quit()
+    return data
+
+
 def mars_news(browser):
 
     # Scrape Mars News
@@ -25,7 +55,7 @@ def mars_news(browser):
 
     return news_title, news_p
 
-###FEATURED IMAGE###
+### FEATURED IMAGE###
 
 def featured_image(browser):
     # Visit URL
@@ -53,7 +83,8 @@ def featured_image(browser):
 
     return img_url
 
-### MARS FACTS ###
+###MARS FACTS###
+
 def mars_facts():
     # Add try/except for error handling
     try:
@@ -68,4 +99,9 @@ def mars_facts():
     df.set_index('Description', inplace=True)
 
     # Convert dataframe into HTML format, add bootstrap
-    return df.to_html()
+    return df.to_html(classes="table table-striped")
+
+if __name__ == "__main__":
+
+    # If running as script, print scraped data
+    print(scrape_all())

@@ -10,8 +10,8 @@ try:
     conn = config.db_string
 except ImportError:
     print("Running on local")
-    conn = 'mongodb://localhost:27017'
-
+    #conn = 'mongodb://localhost:27017/mars_db'
+    conn = 'mongodb+srv://MKaradzhova:Mimi7777!@cluster0.jdxh5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 
 
 #Initiating the flask app
@@ -25,7 +25,7 @@ mongo = PyMongo(app)
 @app.route("/")
 def index():
     marsinfo = mongo.db.mars.find_one()
-    return render_template("index.html", mars=marsinfo)
+    return render_template("index.html", mars = marsinfo)
 
 @app.route("/scrape")
 def scrape():
